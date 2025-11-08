@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=rootpass
+      - MARIADB_DATABASE=auth_microservice_database
+      - MARIADB_USER=myuser
+      - MARIADB_PASSWORD=mypass
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  redis:
+    image: redis:7.0
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  app:
+    build: .
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      # MariaDB Configuration
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/auth_microservice_database
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MariaDBDialect
+      # Redis Configuration
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    depends_on:
+      - mariadb
+      - redis
+
+volumes:
+  mariadb-data:
+  redis-data:

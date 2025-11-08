@@ -1,0 +1,49 @@
+server:
+  servlet:
+    context-path: /api/v1
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  application:
+    name: auth_microservice
+  web:
+    resources:
+      add-mappings: false
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# ===================================================================
+# SECURITY PROPERTIES
+# ===================================================================
+security:
+  jwt:
+    key: 08af2447a30c9c090b3595e6b45cead32eb587dcb1892aae31f073dcb31bce95
+    access:
+      expiration: 1800000
+    user:
+      generator: auth_microservice
+    hashed:
+      secret: d0DMBKNAbVqoX6cT00DEpB/T5atRfONxoJpgM7o+dCM=
+
+# ===================================================================
+# URLS PROPERTIES
+# ===================================================================
+api:
+  uri:
+    domain:
+      auth: "/auth"
+
+# ===================================================================
+# LOG PROPERTIES
+# ===================================================================
+logging:
+  level:
+    root: INFO
+    com.tu.paquete: DEBUG
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} [%thread] %clr(%-5level){yellow,red,green,blue,magenta} %clr(%logger{36}){cyan}:%clr(%L){faint} - %msg%n"
+    file: "[%X{data}%thread] [%X{X-B3-TraceId:-}] %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36}:%L - %msg%n"

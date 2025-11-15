@@ -22,10 +22,11 @@ public class AuthController {
 
     @PostMapping(ApiConstants.REGISTER_ENDPOINT)
     public ResponseEntity<BaseResponse<?>> register(@RequestBody AuthUserRegisterRequest request) {
-        this.authBusiness.registerUser(request);
-        return ResponseEntity.ok(BaseResponse.builder()
-                .message("User created successfully")
+        AuthResponse authResponse =  this.authBusiness.registerUser(request);
+        return ResponseEntity.ok(BaseResponse.<AuthResponse>builder()
+                .message("Register successfully")
                 .status(201)
+                .data(authResponse)
                 .build()
         );
     }

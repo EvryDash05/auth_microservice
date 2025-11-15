@@ -34,10 +34,10 @@ public class AuthBusiness implements AuthService {
 
     @Override
     public AuthResponse login(AuthLoginRequest request) {
-        Authentication authentication = this.authenticate(request.email(), request.password());
+        Authentication authentication = this.authenticate(request.dni(), request.password());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserEntity findUser = this.getUserByDni(request.email());
+        UserEntity findUser = this.getUserByDni(request.dni());
 
         return this.securityHelper.buildAuthResponse(findUser);
     }
@@ -53,13 +53,18 @@ public class AuthBusiness implements AuthService {
     }
 
     @Transactional
-    public String registerUser(AuthUserRegisterRequest request) {
-        this.userRepository.save(UserEntity.builder()
+    public AuthResponse registerUser(AuthUserRegisterRequest request) {
+
+        UserEntity newUser = this.userRepository.save(UserEntity.builder()
                 .dni(request.getDni())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .status(false)
                 .build());
-        return "User created!!";
+
+        Authentication authentication = this.authenticate(request.getDni(), request.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return this.securityHelper.buildAuthResponse(newUser);
     }
 
     private UserEntity getUserByDni(String email) {
